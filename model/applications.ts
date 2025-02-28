@@ -101,7 +101,7 @@ export class ApplicationController {
     async last6MonthAction() {
         return this.getApplicationArray(`
             SELECT * FROM applications
-            WHERE applying_date >= DATE_SUB(CURDATE(), INTERVAL 6 MONTH) 
+            WHERE applying_date >= DATE_SUB(CURDATE(), INTERVAL 6 MONTH)
             ORDER BY applying_date DESC
         `)
     }
@@ -129,7 +129,6 @@ export class ApplicationController {
     }
 
     async editAction(updatedApplication: Application) {
-        
         db.run(
             `UPDATE applications SET applying_date = ?, employer = ?, webpage = ?, position = ?, contact_person = ?, contact_person_gender = ?, acknowledgement_date = ?, interview_date = ?, declination_date = ?, acknowledged_occured = ?, interview_occured = ?, declination_occured = ?, contact_type_id = ?, status_id = ? WHERE id = ?`,
             [
