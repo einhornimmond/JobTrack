@@ -1,0 +1,131 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 12.12.2016, 21:11:39
+    Author     : einhornimmond
+*/
+
+body {
+    background-color:#597fb8;
+}
+
+.row {
+    margin:15px;
+}
+
+.first-row {
+    margin-left:15px;
+    margin-right:15px;
+    margin-top:75px;
+}
+
+.doma-head {
+    background-color:white;
+    border-top-left-radius: 80px;
+    border-top-right-radius: 80px;
+    padding-top:40px;
+    margin-top:20px;
+    text-align: center;
+    height: 80px;
+}
+.doma-head legend {
+    margin-top:-10px;
+}
+
+.doma-content {
+    background-color: white;
+    border-bottom-left-radius: 80px;
+    border-bottom-right-radius: 80px;
+    padding-bottom: 40px;
+    margin-bottom: 20px;
+    padding-left:20px;
+    padding-right:20px;
+}
+
+legend {
+    border-bottom: none;
+    color:#597fb8;
+    font-size:24px;
+    text-shadow: 2px 2px #8ba9d5;
+}
+
+th, td {
+    padding-left: 5px;
+    padding-right:7px;
+}
+
+thead {
+    border-bottom: dotted grey 1px;
+}
+td, th {
+    border-right: dotted grey 1px;
+}
+
+tr:hover {
+    background-color:#afccf9;
+}
+
+.btn {
+   border-radius: 20px; 
+   margin: 5px;
+}
+
+.filter-input input {
+    font-size:12px;
+    color:#597fb8;
+    width:70px;
+    margin-top:2px;
+}
+
+.oversizing {
+    display:inline-block;
+}
+
+.conti {
+    margin-right: 15px;
+}
+
+/* here comes all the print stuff */
+@media print {
+    @page {
+        size: auto A4 landscape;
+        margin: 3mm;
+    }
+    body { 
+        margin-left:0px;
+        padding-left:0px;
+        font-size:14px;
+    }
+    .navbar.navbar-default.navbar-fixed-top, .doma-head {
+        display:none;
+    }
+    a.btn, div.btn {
+        display:none;
+    }
+    legend {
+        display:none;
+    }
+    div.filter-input {
+        display:none;
+    }
+    .first-row {
+        margin-top: 0;
+        margin-left:0px;
+    }
+    .doma-content {
+        margin-left: 0px;
+        padding-left: 0;
+    }
+    
+    th.nr, td.nr,
+    th.webpage, td.webpage
+    {
+        display:none;
+    }
+    .sf-toolbar {
+        display:none;
+    }
+}

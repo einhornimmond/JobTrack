@@ -1,12 +1,11 @@
 {
   "name": "bewerbungstrackerbun",
-  "module": "index.ts",
-  "type": "module",
-  "private": true,
   "devDependencies": {
+    "@types/mithril": "^2.2.7",
     "@types/bun": "latest"
   },
-  "peerDependencies": {
-    "typescript": "^5"
+  "dependencies": {
+    "bootstrap": "^5.3.3",
+    "mithril": "^2.2.14"
   }
 }
