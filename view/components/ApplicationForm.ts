@@ -1,6 +1,6 @@
 import m from 'mithril'
 import { Application } from '../../model/Application'
-import { NavBar } from './NavBar'
+import { NavBar } from './nav/NavBar'
 
 interface Attrs {
     id?: number | null | undefined

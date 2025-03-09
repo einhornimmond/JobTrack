@@ -1,8 +1,10 @@
 {
   "name": "bewerbungstrackerbun",
   "devDependencies": {
+    "@types/bun": "latest",
     "@types/mithril": "^2.2.7",
-    "@types/bun": "latest"
+    "bun-plugin-tailwind": "^0.0.15",
+    "tailwindcss": "^4.0.12"
   },
   "dependencies": {
     "bootstrap": "^5.3.3",

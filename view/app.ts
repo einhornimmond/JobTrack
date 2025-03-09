@@ -1,12 +1,9 @@
-import 'bootstrap/dist/css/bootstrap.css'
-import 'bootstrap/dist/js/bootstrap.js'
-import './assets/style.css'
-import './assets/print-preview.css'
 import m from 'mithril'
-
+import './assets/app.css'
 import { ApplicationsTable } from './components/ApplicationsTable'
 import { Toaster } from './components/Toaster'
 import { ApplicationForm } from './components/ApplicationForm'
+import { Layout } from './components/Layout'
 
 declare global {
     namespace globalThis {
@@ -28,11 +25,15 @@ if(!app) {
 // routes
 m.route(app, '/', {
   '/': {
-    onmatch: () => m.route.set('/lastApplications'),
+    onmatch: () => m.route.set('lastApplications'),
   },
-  '/application/add': ApplicationForm,
-  '/applications': ApplicationsTable,
+  '/application/add': {
+    render: () => m(Layout, m(ApplicationForm))
+  },
+  '/applications': {
+    render: () => m(Layout, m(ApplicationsTable))
+  },
   '/lastApplications': {
-    render: () => m(ApplicationsTable, { last6Months: true })
+    render: () => m(Layout, m(ApplicationsTable, { last6Months: true }))
   },
 })
