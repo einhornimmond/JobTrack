@@ -1,11 +1,14 @@
-import { Database } from "bun:sqlite"
+import { Database } from 'bun:sqlite'
+import { applicationTableName } from '../model/Application'
+import { contactTypeTableName } from '../model/ContactType'
+import { statusTypeTableName } from '../model/StatusType'
 
 // Create the database
-export const db = new Database("db.sqlite3")
+export const db = new Database('db.sqlite3')
 
 // if it is a new sqlite db, create the tables
 db.run(`
-  CREATE TABLE IF NOT EXISTS applications (
+  CREATE TABLE IF NOT EXISTS ${applicationTableName} (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     applying_date TEXT NOT NULL,
     employer TEXT NOT NULL,
@@ -22,4 +25,16 @@ db.run(`
     contact_type_id INTEGER NOT NULL,
     status_id INTEGER NOT NULL
   )
+`)
+
+db.run(`CREATE TABLE IF NOT EXISTS ${contactTypeTableName} (
+    id int(11) NOT NULL,
+    name varchar(255) NOT NULL
+  )
+`)
+
+db.run(`CREATE TABLE IF NOT EXISTS ${statusTypeTableName} (
+  id int(11) NOT NULL,
+  name varchar(255) NOT NULL
+)
 `)

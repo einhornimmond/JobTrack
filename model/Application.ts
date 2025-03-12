@@ -1,3 +1,5 @@
+export const applicationTableName = 'applications'
+
 export class Application {
     id: number
     applying_date: Date

@@ -1,5 +1,7 @@
 import { serve } from 'bun'
 import { applicationRoutes } from './routes/application'
+import { contactTypeRoutes } from './routes/contactType'
+import { statusTypeRoutes } from './routes/statusType'
 
 // Serve a file by buffering it in memory
 async function serverFile(path: string): Promise<Response> {
@@ -19,6 +21,8 @@ const server = serve({
     // Wildcard route for all routes that start with "/api/" and aren't otherwise matched
     '/api/*': Response.json({ message: "Not found" }, { status: 404 }),
     ...applicationRoutes,
+    ...contactTypeRoutes,
+    ...statusTypeRoutes,
     '/*.': async (req) => {
       const url = new URL(req.url)
       const path = `.${url.pathname}`

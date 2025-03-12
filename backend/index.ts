@@ -1,6 +1,8 @@
 import { serve } from 'bun'
 import view from '../index.html'
 import { applicationRoutes } from './routes/application'
+import { contactTypeRoutes } from './routes/contactType'
+import { statusTypeRoutes } from './routes/statusType'
 
 const server = serve({
   routes: {
@@ -13,7 +15,9 @@ const server = serve({
     }),
     // Wildcard route for all routes that start with "/api/" and aren't otherwise matched
     '/api/*': Response.json({ message: "Not found" }, { status: 404 }),
-    ...applicationRoutes
+    ...applicationRoutes,
+    ...contactTypeRoutes,
+    ...statusTypeRoutes,
   },
   // Enable development mode for:
   // - Detailed error messages
