@@ -1,7 +1,7 @@
 # dependencies (bun install)
 node_modules
 .zig-cache
-.zig-out
+zig-out
 
 
 # output

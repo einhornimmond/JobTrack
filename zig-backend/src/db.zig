@@ -1,10 +1,9 @@
 const std = @import("std");
 const sqlite = @import("sqlite");
-const applicationTableName = @import("../model/Application").applicationTableName;
-const contactTypeTableName = @import("../model/ContactType").contactTypeTableName;
-const statusTypeTableName = @import("../model/StatusType").statusTypeTableName;
+const contactTypeTableName = "entity_contact_type";
+const statusTypeTableName = "status_types";
 
-pub fn main() !void {
+pub fn initDb() !sqlite.Db {
     var db = try sqlite.Db.init(.{
         .mode = sqlite.Db.Mode{ .File = "db.sqlite3" },
         .open_flags = .{
@@ -13,10 +12,9 @@ pub fn main() !void {
         },
         .threading_mode = .MultiThread,
     });
-    defer db.deinit();
 
-    try db.exec(&std.fmt.format(
-        \\CREATE TABLE IF NOT EXISTS {s} (
+    try db.exec(
+        \\CREATE TABLE IF NOT EXISTS applications (
         \\  id INTEGER PRIMARY KEY AUTOINCREMENT,
         \\  applying_date TEXT NOT NULL,
         \\  employer TEXT NOT NULL,
@@ -33,19 +31,21 @@ pub fn main() !void {
         \\  contact_type_id INTEGER NOT NULL,
         \\  status_id INTEGER NOT NULL
         \\)
-    , .{applicationTableName}));
+    , .{}, .{});
 
-    try db.exec(&std.fmt.format(
-        \\CREATE TABLE IF NOT EXISTS {s} (
+    try db.exec(
+        \\CREATE TABLE IF NOT EXISTS entity_contact_type (
         \\  id INTEGER NOT NULL,
         \\  name TEXT NOT NULL
         \\)
-    , .{contactTypeTableName}));
+    , .{}, .{});
 
-    try db.exec(&std.fmt.format(
-        \\CREATE TABLE IF NOT EXISTS {s} (
+    try db.exec(
+        \\CREATE TABLE IF NOT EXISTS status_types (
         \\  id INTEGER NOT NULL,
         \\  name TEXT NOT NULL
         \\)
-    , .{statusTypeTableName}));
+    , .{}, .{});
+
+    return db;
 }
