@@ -1,5 +1,5 @@
 
-import { db } from '../db'
+import { db } from './db'
 import { Application } from '../model/Application'
 import type { Changes } from 'bun:sqlite'
  
