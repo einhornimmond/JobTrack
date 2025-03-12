@@ -1,6 +1,13 @@
 {
-  "name": "bewerbungstrackerbun",
+  "name": "job-track",
+  "scripts": {
+    "build": "bun run build-client && bun run build-server",
+    "dev": "bun backend",
+    "build-server": "bun build --minify backend/production.ts --compile --outfile ./dist/JobTrack",
+    "build-client": "bun run build-client.js"
+  },
   "devDependencies": {
+    "@tailwindcss/cli": "^4.0.13",
     "@types/bun": "latest",
     "@types/mithril": "^2.2.7",
     "bun-plugin-tailwind": "^0.0.15",

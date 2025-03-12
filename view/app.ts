@@ -1,5 +1,5 @@
 import m from 'mithril'
-import './assets/app.css'
+import './app.css'
 import { ApplicationsTable } from './components/ApplicationsTable'
 import { Toaster } from './components/Toaster'
 import { ApplicationForm } from './components/ApplicationForm'

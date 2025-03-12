@@ -1,26 +1,3 @@
-/*
-mysql
-CREATE TABLE `applications` (
-  `id` int(11) NOT NULL,
-  `applying_date` date NOT NULL,
-  `employer` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
-  `webpage` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
-  `position` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
-  `contact_person` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
-  `contact_person_gender` varchar(1) COLLATE utf8_unicode_ci NOT NULL,
-  `acknowledgement_date` date NOT NULL,
-  `interview_date` date NOT NULL,
-  `declination_date` date NOT NULL,
-  `acknowledged_occured` tinyint(1) NOT NULL,
-  `interview_occured` tinyint(1) NOT NULL,
-  `declination_occured` tinyint(1) NOT NULL,
-  `contact_type_id` int(11) DEFAULT NULL,
-  `status_id` int(11) DEFAULT NULL
-);
-
-php symfony
-*/
-
 export class Application {
     id: number
     applying_date: Date
