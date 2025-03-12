@@ -9,7 +9,14 @@ bun install
 To run:
 
 ```bash
-bun run index.ts
+bun run dev
 ```
+
+To build:
+```bash
+bun run build
+```
+
+and then you can run it from `dist` folder the JobTrack Binary
 
 This project was created using `bun init` in bun v1.2.4. [Bun](https://bun.sh) is a fast all-in-one JavaScript runtime.
