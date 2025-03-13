@@ -26,11 +26,19 @@ pub fn build(b: *std.Build) void {
         .optimize = optimize,
     });
 
+    // add sqlite lib, wrap a C based sqlite lib
     const sqlite = b.dependency("sqlite", .{
         .target = target,
         .optimize = optimize,
     });
     exe_mod.addImport("sqlite", sqlite.module("sqlite"));
+
+    // add fast http server written in zig
+    const httpz = b.dependency("httpz", .{
+        .target = target,
+        .optimize = optimize,
+    });
+    exe_mod.addImport("httpz", httpz.module("httpz"));
 
     // This creates another `std.Build.Step.Compile`, but this one builds an executable
     // rather than a static library.
