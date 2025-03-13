@@ -5,19 +5,24 @@ const httpz = @import("httpz");
 const Application = @import("Application.zig");
 const appRepro = @import("ApplicationRepository.zig");
 
-const App = struct { db: *sqlite.Db };
+const App = struct {
+    db: *sqlite.Db,
+    allocator: std.mem.Allocator,
+};
 
 pub fn main() !void {
     // memory management
-    var gpa = std.heap.GeneralPurposeAllocator(.{}){};
-    const allocator = gpa.allocator();
+    const allocator = std.heap.smp_allocator;
+    // var buffer: [1024 * 1024 * 10]u8 = undefined;
+    // var fba = std.heap.FixedBufferAllocator.init(&buffer);
+    // const allocator = fba.allocator();
 
     // init db, create table if not exists
     var database = try db.initDb();
     defer database.deinit();
 
     // start http server
-    var app = App{ .db = &database };
+    var app = App{ .db = &database, .allocator = allocator };
     var server = try httpz.Server(*App).init(allocator, .{ .port = 3000 }, &app);
     var router = try server.router(.{});
 
@@ -33,23 +38,25 @@ pub fn main() !void {
 }
 
 fn getAllApplicationsRoute(app: *App, _: *httpz.Request, res: *httpz.Response) !void {
-    try res.json(try appRepro.getAllApplications(app.db), .{});
+    const applications = try appRepro.getAllApplications(app.allocator, app.db);
+    defer app.allocator.free(applications);
+    try res.json(applications, .{});
 }
 
 fn getApplicationsLast6MonthsRoute(app: *App, _: *httpz.Request, res: *httpz.Response) !void {
-    try res.json(try appRepro.getApplicationsLast6Months(app.db), .{});
+    const applications = try appRepro.getApplicationsLast6Months(app.allocator, app.db);
+    defer app.allocator.free(applications);
+    try res.json(applications, .{});
 }
 
-fn serveStaticFile(_: *App, req: *httpz.Request, res: *httpz.Response) !void {
-    var gpa = std.heap.GeneralPurposeAllocator(.{}){};
-    const allocator = gpa.allocator();
-
+fn serveStaticFile(app: *App, req: *httpz.Request, res: *httpz.Response) !void {
+    const allocator = app.allocator;
     var path = req.url.path;
     if (std.mem.eql(u8, path, "/") or std.fs.path.extension(path).len == 0) {
         path = "/index.html";
     }
     const full_path = try std.fs.path.join(allocator, &.{ ".", path });
-    defer allocator.free(full_path);
+    defer allocator.free(full_path); // not needed for arena allocator
 
     var file = std.fs.cwd().openFile(full_path, .{}) catch {
         std.debug.print("File not found: {s}\n", .{full_path});
@@ -59,8 +66,8 @@ fn serveStaticFile(_: *App, req: *httpz.Request, res: *httpz.Response) !void {
     };
     defer file.close();
 
-    const buf = try file.readToEndAlloc(allocator, 10 * 1024 * 1024); // max. 10MB
-    defer allocator.free(buf);
+    const buf = try file.readToEndAlloc(allocator, 1 * 1024 * 1024); // max. 10MB
+    defer allocator.free(buf); // not needed for arena allocator
 
     const file_extension = std.fs.path.extension(path);
 
