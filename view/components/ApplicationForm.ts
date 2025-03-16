@@ -1,55 +1,88 @@
 import m from 'mithril'
-import { Application } from '../../model/Application'
-import { NavBar } from './nav/NavBar'
 
 interface Attrs {
-    id?: number | null | undefined
 }
 
 export class ApplicationForm implements m.ClassComponent<Attrs> {
-    submit(e: Event): void {
-        e.preventDefault()
-        console.log('submit: ', e)
-    }
+  application = {
+    id: 0,
+    applying_date: new Date().toISOString().split('T')[0],  // today's date
+    employer: '',
+    webpage: '',
+    position: '',
+    contact_person: '',
+    contact_person_gender: '',
+    acknowledgement_date: '',
+    interview_date: '',
+    declination_date: '',
+    acknowledged_occured: false,
+    interview_occured: false,
+    declination_occured: false,
+    contact_type_id: 0,
+    status_id: 0,
+  };
 
-    view() {
-       return [
-               m(NavBar),
-               m('.first-row', 
-                 m('.oversizing.conti', [
-                   m('.doma-head', m('legend', 'Neue Bewerbung')),
-                   m('.doma-content.oversizing', 
-                     m('form#applicationForm', {onsubmit: this.submit}, [
-                        m('.mt-2', [
-                            m('label.me-4', {for: 'applyingDate'}, 'Beworben am:'),
-                            m('input#applyingDate', { type: 'date', name: 'applying_date' }),
-                        ]),
-                        m('.mt-2', [
-                            m('label.me-4', {for: 'employer'}, 'Arbeitgeber: '),
-                            m('input#employer', { type: 'text', name: 'employer' })
-                        ]),
-                        m('input.mt-2', { type: 'submit', value: 'Speichern' })
-                     ])
-                   )
-                 ])
-               )
-       ]
-    }
+  inputField(label: string, value: string, type: string = 'text', oninput: (e: Event) => void) {
+    return m('div', { class: 'mb-4' }, [
+      m('label', { class: 'block text-sm font-semibold' }, label),
+      m('input', {
+        class: 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent',
+        type: type,
+        value: value,
+        oninput: oninput,
+      })
+    ]);
+  }
+
+  checkboxField(label: string, checked: boolean, onchange: (e: Event) => void) {
+    return m('div', { class: 'mb-4 flex items-center' }, [
+      m('input', {
+        type: 'checkbox',
+        class: 'mr-2',
+        checked: checked,
+        onchange: onchange,
+      }),
+      m('label', { class: 'text-sm font-semibold' }, label),
+    ]);
+  }
+
+  selectField(label: string, options: string[], selectedValue: string, onchange: (e: Event) => void) {
+    return m('div', { class: 'mb-4' }, [
+      m('label', { class: 'block text-sm font-semibold' }, label),
+      m('select', {
+        class: 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent',
+        value: selectedValue,
+        onchange: onchange,
+      }, options.map((option) => {
+        return m('option', { value: option }, option);
+      })),
+    ]);
+  }
+
+  view() {
+    return m('form.container.w-3/5.mx-auto.text-stone-200', { class: 'space-y-6' }, [
+      this.inputField('Arbeitgeber', this.application.employer, 'text', (e: Event) => { this.application.employer = (e.target as HTMLInputElement).value; }),
+      this.inputField('Webseite', this.application.webpage, 'url', (e: Event) => { this.application.webpage = (e.target as HTMLInputElement).value; }),
+      this.inputField('Position', this.application.position, 'text', (e: Event) => { this.application.position = (e.target as HTMLInputElement).value; }),
+      this.inputField('Kontaktperson', this.application.contact_person, 'text', (e: Event) => { this.application.contact_person = (e.target as HTMLInputElement).value; }),
+      this.inputField('Kontaktperson (Geschlecht)', this.application.contact_person_gender, 'text', (e: Event) => { this.application.contact_person_gender = (e.target as HTMLInputElement).value; }),
+
+      this.inputField('Bewerbungsdatum', this.application.applying_date, 'date', (e: Event) => { this.application.applying_date = (e.target as HTMLInputElement).value; }),
+      this.inputField('Zusage-Datum', this.application.acknowledgement_date, 'date', (e: Event) => { this.application.acknowledgement_date = (e.target as HTMLInputElement).value; }),
+      this.inputField('Vorstellungsgespräch-Datum', this.application.interview_date, 'date', (e: Event) => { this.application.interview_date = (e.target as HTMLInputElement).value; }),
+      this.inputField('Absage-Datum', this.application.declination_date, 'date', (e: Event) => { this.application.declination_date = (e.target as HTMLInputElement).value; }),
+
+      this.checkboxField('Zusage erhalten', this.application.acknowledged_occured, (e: Event) => { this.application.acknowledged_occured = (e.target as HTMLInputElement).checked; }),
+      this.checkboxField('Vorstellungsgespräch stattgefunden', this.application.interview_occured, (e: Event) => { this.application.interview_occured = (e.target as HTMLInputElement).checked; }),
+      this.checkboxField('Absage erhalten', this.application.declination_occured, (e: Event) => { this.application.declination_occured = (e.target as HTMLInputElement).checked; }),
+
+      this.selectField('Kontaktart', ['Telefon', 'E-Mail', 'Persönlich'], this.application.contact_type_id.toString(), (e: Event) => { this.application.contact_type_id = parseInt((e.target as HTMLSelectElement).value); }),
+      this.selectField('Status', ['Offen', 'Abgeschlossen', 'Abgelehnt'], this.application.status_id.toString(), (e: Event) => { this.application.status_id = parseInt((e.target as HTMLSelectElement).value); }),
+
+      m('button.cursor-pointer', {
+        class: 'px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors duration-300',
+        type: 'submit',
+      }, 'Bewerbung absenden'),
+    ]);
+  }
 }
-
-/*id: number
-    applying_date: Date
-    employer: string
-    webpage: string
-    position: string
-    contact_person: string
-    contact_person_gender: string
-    acknowledgement_date: Date
-    interview_date: Date
-    declination_date: Date
-    acknowledged_occured: boolean
-    interview_occured: boolean
-    declination_occured: boolean
-    contact_type_id: number
-    status_id: number
-    */

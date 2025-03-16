@@ -1,6 +1,7 @@
 import m from 'mithril'
 import { Application } from '../../../model/Application'
 import { HeaderField } from './HeaderField'
+import { Icon } from '../Icon'
 
 interface Attrs {
   last6Months: boolean
@@ -61,8 +62,8 @@ export class ApplicationsTable implements m.ClassComponent<Attrs> {
         // m('td', m('a', { href: app.webpage, target: '_blank' }, app.webpage)),
         m('td', app.position),
         m('td', app.contact_person),
-        m('td', app.contact_type_id),
-        m('td', app.status_id),
+        m('td', contactTypes.getNameById(app.contact_type_id)),
+        m('td', statusTypes.getNameById(app.status_id)),
         m('td', new Date(app.acknowledgement_date).toLocaleDateString()),
         m('td', new Date(app.interview_date).toLocaleDateString()),
         m('td.pr-2', new Date(app.declination_date).toLocaleDateString())
@@ -72,27 +73,33 @@ export class ApplicationsTable implements m.ClassComponent<Attrs> {
   view() {
     if(this.state.applications) {
       return [
-        m('h2.text-xl.text-white.mb-4', `Bewerbungen (${this.state.count})`),
-          m('.overflow-x-auto.rounded-xl', [
-            m('table.w-full.text-white.border-collapse', [
-              m('thead.bg-white/30.text-sky-800',
-                m('tr', [
-                    m(HeaderField, { label: 'Beworben am' }),
-                    m(HeaderField, { label: 'Arbeitgeber' }),
-                    m(HeaderField, { label: 'Position' }),
-                    m(HeaderField, { label: 'Ansprechpartner' }),
-                    m(HeaderField, { label: 'Kontakt' }),
-                    m(HeaderField, { label: 'Status' }),
-                    m(HeaderField, { label: 'Eingangs- bestätigung' }),
-                    m(HeaderField, { label: 'Vorstellungs- gespräch' }),
-                    m(HeaderField, { label: 'Absage' })
-                ])
-              ),
-              m(
-                'tbody.bg-white/20.divide-y.divide-white/30.ml-3',
-                this.state.applications.map(this.viewApplication)
-              )
-            ])
+        m('.flex.items-center.justify-between', [
+          m('h2.text-xl.text-white.mb-4', `Bewerbungen (${this.state.count})`),
+          m(m.route.Link, {
+              class: 'button cursor-pointer flex items-center bg-sky-800 hover:bg-sky-900 text-white rounded-lg p-2 m-2 nav-item', 
+              href: '/application/add'
+            }, m(Icon, { icon: 'plus', iconSet: 'mdi'}), 'Neue Bewerbung')
+        ]),
+        m('.overflow-x-auto.rounded-xl', [
+          m('table.w-full.text-white.border-collapse', [
+            m('thead.bg-white/30.text-sky-800',
+              m('tr', [
+                  m(HeaderField, { label: 'Beworben am' }),
+                  m(HeaderField, { label: 'Arbeitgeber' }),
+                  m(HeaderField, { label: 'Position' }),
+                  m(HeaderField, { label: 'Ansprechpartner' }),
+                  m(HeaderField, { label: 'Kontakt', className: 'w-3xs' }),
+                  m(HeaderField, { label: 'Status' }),
+                  m(HeaderField, { label: 'Eingangs- bestätigung' }),
+                  m(HeaderField, { label: 'Vorstellungs- gespräch' }),
+                  m(HeaderField, { label: 'Absage' })
+              ])
+            ),
+            m(
+              'tbody.bg-white/20.divide-y.divide-white/30.ml-3',
+              this.state.applications.map(this.viewApplication)
+            )
+          ])
         ])
       ]
     } else {

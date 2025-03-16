@@ -7,6 +7,8 @@
     "build-client": "bun run build-client.js"
   },
   "devDependencies": {
+    "@iconify-json/lucide": "^1.2.30",
+    "@iconify-json/mdi": "^1.2.3",
     "@tailwindcss/cli": "^4.0.13",
     "@types/bun": "latest",
     "@types/mithril": "^2.2.7",
@@ -14,7 +16,9 @@
     "tailwindcss": "^4.0.12"
   },
   "dependencies": {
+    "@iconify/utils": "^2.3.0",
     "bootstrap": "^5.3.3",
-    "mithril": "^2.2.14"
+    "mithril": "^2.2.14",
+    "select2": "^4.1.0-rc.0"
   }
 }

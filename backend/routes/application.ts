@@ -5,12 +5,12 @@ async function upsertRoute(req: BunRequest<'/api/application'>) {
   const application = await req.json()
   const isUpdate = application.id > 0
   const { changes } = upsert(application)
-  
+
   if (changes === 1) {
     return Response.json(
       { message: `Application ${isUpdate ? 'updated' : 'added'}` },
       { status: 201 }
-    )  
+    )
   } else {
     return Response.json(
       { message: `Failed to ${isUpdate ? 'update' : 'add'} application` },
@@ -45,7 +45,7 @@ export const applicationRoutes = {
     DELETE(req: BunRequest<'/api/application/:id'>) {
       const id = parseInt(req.params.id)
       const { changes } = remove(id)
-      
+
       if (changes !== 1) {
         return Response.json({ message: 'Application not found' }, { status: 404 });
       } else {

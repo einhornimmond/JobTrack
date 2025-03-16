@@ -4,22 +4,28 @@ import { ApplicationsTable } from './components/ApplicationsTable'
 import { Toaster } from './components/Toaster'
 import { ApplicationForm } from './components/ApplicationForm'
 import { Layout } from './components/Layout'
+import { StatusTypes } from './model/StatusTypes'
+import { ContactTypes } from './model/ContactTypes'
 
 declare global {
     namespace globalThis {
       var toaster: Toaster
       var serverUrl: string
+      var statusTypes: StatusTypes
+      var contactTypes: ContactTypes
     }
 }
 
 window.toaster = new Toaster
 window.serverUrl = 'http://localhost:3000'
+window.statusTypes = new StatusTypes(`${window.serverUrl}/api/statusTypes`)
+window.contactTypes = new ContactTypes(`${window.serverUrl}/api/contactTypes`)
 
 m.route.prefix = ''
 
 const app = document.getElementById('app')
 if(!app) {
-  throw new Error('Root element not found') 
+  throw new Error('Root element not found')
 }
 
 // routes

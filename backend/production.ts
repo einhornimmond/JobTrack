@@ -18,6 +18,9 @@ const server = serve({
     // Serve all other requests as file requests
     '/' : async () => serverFile('./index.html'),
     // api
+    '/api/s': {
+      GET: () => Response.json({ message: "Hello, World!" }),
+    },
     // Wildcard route for all routes that start with "/api/" and aren't otherwise matched
     '/api/*': Response.json({ message: "Not found" }, { status: 404 }),
     ...applicationRoutes,
