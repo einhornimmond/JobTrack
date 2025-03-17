@@ -1,7 +1,8 @@
 const std = @import("std");
 const sqlite = @import("sqlite");
-const contactTypeTableName = "entity_contact_type";
-const statusTypeTableName = "status_types";
+const applicationTableName = @import("Application.zig").applicationTableName;
+const contactTypeTableName = @import("ContactType.zig").contactTypeTableName;
+const statusTypeTableName = @import("StatusType.zig").statusTypeTableName;
 
 pub fn initDb() !sqlite.Db {
     var db = try sqlite.Db.init(.{
@@ -14,7 +15,9 @@ pub fn initDb() !sqlite.Db {
     });
 
     try db.exec(
-        \\CREATE TABLE IF NOT EXISTS applications (
+        \\CREATE TABLE IF NOT EXISTS 
+    ++ applicationTableName ++
+        \\ (
         \\  id INTEGER PRIMARY KEY AUTOINCREMENT,
         \\  applying_date TEXT NOT NULL,
         \\  employer TEXT NOT NULL,
@@ -34,14 +37,18 @@ pub fn initDb() !sqlite.Db {
     , .{}, .{});
 
     try db.exec(
-        \\CREATE TABLE IF NOT EXISTS entity_contact_type (
+        \\CREATE TABLE IF NOT EXISTS 
+    ++ contactTypeTableName ++
+        \\ (
         \\  id INTEGER NOT NULL,
         \\  name TEXT NOT NULL
         \\)
     , .{}, .{});
 
     try db.exec(
-        \\CREATE TABLE IF NOT EXISTS status_types (
+        \\CREATE TABLE IF NOT EXISTS 
+    ++ statusTypeTableName ++
+        \\ (
         \\  id INTEGER NOT NULL,
         \\  name TEXT NOT NULL
         \\)
