@@ -7,7 +7,7 @@ interface Attrs {
 
 export class NavItem implements ClassComponent<Attrs> {
   view({ attrs }: m.Vnode<Attrs>) {
-    const isActive = m.route.get() === '/' + attrs.route
+    const isActive = m.route.get() === attrs.route
     return m('.nav-item', 
       isActive 
         ? m('span.active', attrs.label)

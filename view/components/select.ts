@@ -81,7 +81,7 @@ export class Select implements m.ClassComponent<Attrs> {
           value: attrs.value,
           onchange: (e: Event) => this.handleSelectChange(e, attrs)
         }, [
-          m('option', { value: '', disabled: true, selected: !attrs.value }, 
+          m('option', { value: 0, disabled: true, selected: !attrs.value }, 
             attrs.placeholder || 'Bitte wählen...'),
           attrs.options.map(option => 
             m('option.text-stone-800', { value: option.id, selected: attrs.value === option.id }, option.name)

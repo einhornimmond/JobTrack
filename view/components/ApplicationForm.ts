@@ -19,8 +19,8 @@ export class ApplicationForm implements m.ClassComponent<Attrs> {
     acknowledged_occured: false,
     interview_occured: false,
     declination_occured: false,
-    contact_type_id: 1,
-    status_id: 1,
+    contact_type_id: 0,
+    status_id: 0,
   };
 
   inputField(label: string, value: string, type: string = 'text', oninput: (e: Event) => void) {
@@ -49,12 +49,12 @@ export class ApplicationForm implements m.ClassComponent<Attrs> {
 
   selectField(label: string, options: Option[], selectedValue: number, onchange: (value: number) => void, placeholder?: string, addUrl?: string) {
     return m(Select, {
-      label: label,
-      options: options,
+      label,
+      options,
       value: selectedValue,
-      onchange: onchange,
-      placeholder: placeholder,
-      addUrl: addUrl
+      onchange,
+      placeholder,
+      addUrl
     });
   }
 
