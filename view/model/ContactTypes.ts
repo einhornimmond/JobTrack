@@ -1,4 +1,6 @@
+import m from 'mithril'
 import { ContactType } from '../../model/ContactType'
+import type { Option } from '../components/select'
 
 export class ContactTypes {
   private contactTypes: Map<number, ContactType> = new Map()
@@ -15,10 +17,18 @@ export class ContactTypes {
         return map
       }
       , new Map())
+      m.redraw()
     })
   }
   public getNameById(id: number): string {
     const contactType = this.contactTypes.get(id)
     return contactType ? contactType.name : id.toString()
+  }
+
+  public getOptions(): Option[] {
+    return Array.from(this.contactTypes.values()).map((contactType) => ({
+      id: contactType.id,
+      name: contactType.name
+    }))
   }
 }

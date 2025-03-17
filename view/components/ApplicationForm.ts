@@ -1,4 +1,5 @@
 import m from 'mithril'
+import { Select, type Option } from './select'
 
 interface Attrs {
 }
@@ -18,8 +19,8 @@ export class ApplicationForm implements m.ClassComponent<Attrs> {
     acknowledged_occured: false,
     interview_occured: false,
     declination_occured: false,
-    contact_type_id: 0,
-    status_id: 0,
+    contact_type_id: 1,
+    status_id: 1,
   };
 
   inputField(label: string, value: string, type: string = 'text', oninput: (e: Event) => void) {
@@ -46,17 +47,15 @@ export class ApplicationForm implements m.ClassComponent<Attrs> {
     ]);
   }
 
-  selectField(label: string, options: string[], selectedValue: string, onchange: (e: Event) => void) {
-    return m('div', { class: 'mb-4' }, [
-      m('label', { class: 'block text-sm font-semibold' }, label),
-      m('select', {
-        class: 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent',
-        value: selectedValue,
-        onchange: onchange,
-      }, options.map((option) => {
-        return m('option', { value: option }, option);
-      })),
-    ]);
+  selectField(label: string, options: Option[], selectedValue: number, onchange: (value: number) => void, placeholder?: string, addUrl?: string) {
+    return m(Select, {
+      label: label,
+      options: options,
+      value: selectedValue,
+      onchange: onchange,
+      placeholder: placeholder,
+      addUrl: addUrl
+    });
   }
 
   view() {
@@ -76,8 +75,9 @@ export class ApplicationForm implements m.ClassComponent<Attrs> {
       this.checkboxField('Vorstellungsgespräch stattgefunden', this.application.interview_occured, (e: Event) => { this.application.interview_occured = (e.target as HTMLInputElement).checked; }),
       this.checkboxField('Absage erhalten', this.application.declination_occured, (e: Event) => { this.application.declination_occured = (e.target as HTMLInputElement).checked; }),
 
-      this.selectField('Kontaktart', ['Telefon', 'E-Mail', 'Persönlich'], this.application.contact_type_id.toString(), (e: Event) => { this.application.contact_type_id = parseInt((e.target as HTMLSelectElement).value); }),
-      this.selectField('Status', ['Offen', 'Abgeschlossen', 'Abgelehnt'], this.application.status_id.toString(), (e: Event) => { this.application.status_id = parseInt((e.target as HTMLSelectElement).value); }),
+      this.selectField('Kontaktart', contactTypes.getOptions(), this.application.contact_type_id, (value: number) => { this.application.contact_type_id = value; }, 'Kontaktart wählen...', '/api/contactType'),
+      
+      this.selectField('Status', statusTypes.getOptions(), this.application.status_id, (value: number) => { this.application.status_id = value; }, 'Status wählen...', '/api/statusType'),
 
       m('button.cursor-pointer', {
         class: 'px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors duration-300',

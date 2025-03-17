@@ -1,5 +1,6 @@
+import m from 'mithril'
 import { StatusType } from '../../model/StatusType'
-
+import type { Option } from '../components/select'
 export class StatusTypes {
   private statusTypes: Map<number, StatusType> = new Map()
   public constructor(url: string) {
@@ -15,11 +16,19 @@ export class StatusTypes {
         map.set(statusType.id, statusType)
         return map
       }, new Map())
+      m.redraw()
     })
   }
 
   public getNameById(id: number): string {
     const statusType = this.statusTypes.get(id)
     return statusType ? statusType.name : id.toString()
+  }
+
+  public getOptions(): Option[] {
+    return Array.from(this.statusTypes.values()).map((statusType) => ({
+      id: statusType.id,
+      name: statusType.name
+    }))
   }
 }
