@@ -1,7 +1,6 @@
 import m from 'mithril'
 import { Application } from '../../../model/Application'
 import { HeaderField } from './HeaderField'
-import { Icon } from '../Icon'
 
 interface Attrs {
   last6Months: boolean
@@ -78,21 +77,23 @@ export class ApplicationsTable implements m.ClassComponent<Attrs> {
           m(m.route.Link, {
               class: 'button cursor-pointer flex items-center bg-sky-800 hover:bg-sky-900 text-white rounded-lg p-2 m-2 nav-item', 
               href: '/application/add'
-            }, m(Icon, { icon: 'plus', iconSet: 'mdi'}), 'Neue Bewerbung')
+            }, 'Neue Bewerbung')
         ]),
         m('.overflow-x-auto.rounded-xl', [
           m('table.w-full.text-white.border-collapse', [
             m('thead.bg-white/30.text-sky-800',
               m('tr', [
-                  m(HeaderField, { label: 'Beworben am' }),
-                  m(HeaderField, { label: 'Arbeitgeber' }),
-                  m(HeaderField, { label: 'Position' }),
-                  m(HeaderField, { label: 'Ansprechpartner' }),
-                  m(HeaderField, { label: 'Kontakt', className: 'w-3xs' }),
-                  m(HeaderField, { label: 'Status' }),
-                  m(HeaderField, { label: 'Eingangs- bestätigung' }),
-                  m(HeaderField, { label: 'Vorstellungs- gespräch' }),
-                  m(HeaderField, { label: 'Absage' })
+                  [
+                    'Beworben am',
+                    'Arbeitgeber',
+                    'Position',
+                    'Ansprechpartner',
+                    'Kontakt',
+                    'Status',
+                    'Eingangs- bestätigung',
+                    'Vorstellungs- gespräch',
+                    'Absage'
+                  ].map(label => m(HeaderField, { label }))
               ])
             ),
             m(
@@ -107,18 +108,3 @@ export class ApplicationsTable implements m.ClassComponent<Attrs> {
     }
   }
 }
-
-/*
- var gApplicationMapping = {
-            applying_date:"Beworben am",
-            employer:"Arbeitgeber",
-            webpage:"Webseite",
-            position:"Position",
-            contact_person:"Ansprechpartner",
-            contact_type:"Kontakt",
-            status:"Status",
-            acknowledge_date:"Eingangs- bestätigung",
-            interview_date:"Vorstellungs- gespräch",
-            declination_date:"Absage"
-        };
-    */
