@@ -1,27 +1,16 @@
 import m from 'mithril'
 import { Select, type Option } from './select'
+import { Application } from '../../model/Application';
 
 interface Attrs {
 }
 
 export class ApplicationForm implements m.ClassComponent<Attrs> {
-  application = {
-    id: 0,
-    applying_date: new Date().toISOString().split('T')[0],  // today's date
-    employer: '',
-    webpage: '',
-    position: '',
-    contact_person: '',
-    contact_person_gender: '',
-    acknowledgement_date: '',
-    interview_date: '',
-    declination_date: '',
-    acknowledged_occured: false,
-    interview_occured: false,
-    declination_occured: false,
-    contact_type_id: 0,
-    status_id: 0,
-  };
+  private application: Application
+
+  constructor() {
+    this.application = new Application(null)
+  }
 
   inputField(label: string, value: string, type: string = 'text', oninput: (e: Event) => void) {
     return m('div', { class: 'mb-4' }, [
