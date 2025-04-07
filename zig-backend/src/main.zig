@@ -3,15 +3,35 @@ const std = @import("std");
 const sqlite = @import("sqlite");
 const httpz = @import("httpz");
 const Application = @import("Application.zig");
-const appRepro = @import("ApplicationRepository.zig");
-const statusTypeRepo = @import("StatusTypeRepository.zig");
-const contactTypeRepo = @import("ContactTypeRepository.zig");
+const StatusType = @import("StatusType.zig");
+const ContactType = @import("ContactType.zig");
+const applicationTableName = @import("Application.zig").applicationTableName;
+const statusTypeTableName = @import("StatusType.zig").statusTypeTableName;
+const contactTypeTableName = @import("ContactType.zig").contactTypeTableName;
 
 const App = struct {
     db: *sqlite.Db,
     allocator: std.mem.Allocator,
     mutex: std.Thread.Mutex,
 };
+
+fn createDbRoute(
+    comptime T: type,
+    comptime query: []const u8,
+) fn (*App, *httpz.Request, *httpz.Response) anyerror!void {
+    return struct {
+        fn route(app: *App, _: *httpz.Request, res: *httpz.Response) anyerror!void {
+            app.mutex.lock();
+            defer app.mutex.unlock();
+
+            var stmt = try app.db.prepare(query);
+            defer stmt.deinit();
+            const items = try stmt.all(T, app.allocator, .{}, .{});
+            defer app.allocator.free(items);
+            try res.json(items, .{});
+        }
+    }.route;
+}
 
 pub fn main() !void {
     // memory management
@@ -37,49 +57,13 @@ pub fn main() !void {
     router.get("/*", serveStaticFile, .{});
 
     // api
-    router.get("/api/applications", getAllApplicationsRoute, .{});
-    router.get("/api/applications/last6months", getApplicationsLast6MonthsRoute, .{});
-    router.get("/api/statusTypes", getAllStatusTypesRoute, .{});
-    router.get("/api/contactTypes", getAllContactTypesRoute, .{});
+    router.get("/api/applications", createDbRoute(Application, "SELECT * FROM " ++ applicationTableName ++ " ORDER BY applying_date DESC"), .{});
+    router.get("/api/applications/last6months", createDbRoute(Application, "SELECT * FROM " ++ applicationTableName ++ " WHERE applying_date >= date('now', '-6 months') ORDER BY applying_date DESC"), .{});
+    router.get("/api/statusTypes", createDbRoute(StatusType, "SELECT * FROM " ++ statusTypeTableName), .{});
+    router.get("/api/contactTypes", createDbRoute(ContactType, "SELECT * FROM " ++ contactTypeTableName), .{});
 
     std.debug.print("Listening on localhost:3000\n", .{});
     try server.listen();
-}
-
-fn getAllApplicationsRoute(app: *App, _: *httpz.Request, res: *httpz.Response) !void {
-    app.mutex.lock();
-    defer app.mutex.unlock();
-
-    const applications = try appRepro.getAllApplications(app.allocator, app.db);
-    defer app.allocator.free(applications);
-    try res.json(applications, .{});
-}
-
-fn getApplicationsLast6MonthsRoute(app: *App, _: *httpz.Request, res: *httpz.Response) !void {
-    app.mutex.lock();
-    defer app.mutex.unlock();
-
-    const applications = try appRepro.getApplicationsLast6Months(app.allocator, app.db);
-    defer app.allocator.free(applications);
-    try res.json(applications, .{});
-}
-
-fn getAllStatusTypesRoute(app: *App, _: *httpz.Request, res: *httpz.Response) !void {
-    app.mutex.lock();
-    defer app.mutex.unlock();
-
-    const statusTypes = try statusTypeRepo.getAllStatusTypes(app.allocator, app.db);
-    defer app.allocator.free(statusTypes);
-    try res.json(statusTypes, .{});
-}
-
-fn getAllContactTypesRoute(app: *App, _: *httpz.Request, res: *httpz.Response) !void {
-    app.mutex.lock();
-    defer app.mutex.unlock();
-
-    const contactTypes = try contactTypeRepo.getAllContactTypes(app.allocator, app.db);
-    defer app.allocator.free(contactTypes);
-    try res.json(contactTypes, .{});
 }
 
 fn serveStaticFile(app: *App, req: *httpz.Request, res: *httpz.Response) !void {

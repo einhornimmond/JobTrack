@@ -1,9 +1,10 @@
 {
   "name": "job-track",
   "scripts": {
-    "build": "bun run build-client && bun run build-server",
+    "build": "bun run build-client && bun run build-server:zig",
     "dev": "bun backend",
-    "build-server": "bun build --minify backend/production.ts --compile --outfile ./dist/JobTrack",
+    "build-server:bun": "bun build --minify backend/production.ts --compile --outfile ./dist/JobTrack",
+    "build-server:zig": "bun run build-server.js",
     "build-client": "bun run build-client.js"
   },
   "devDependencies": {

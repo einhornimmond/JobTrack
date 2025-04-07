@@ -63,7 +63,7 @@ export class Toaster implements m.ClassComponent<{}> {
 
   view() {
     return m(
-      '.toast-container.position-fixed.top-0.end-0.p-3',
+      '.toast-container.position-fixed',
       this.toasts.map((toast) =>
         m(`.toast.show.gdd-toaster${toast.variant}`,
           {
@@ -95,4 +95,3 @@ export class Toaster implements m.ClassComponent<{}> {
     )
   }
 }
-
