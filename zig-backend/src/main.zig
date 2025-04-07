@@ -26,8 +26,9 @@ fn createDbRoute(
 
             var stmt = try app.db.prepare(query);
             defer stmt.deinit();
-            const items = try stmt.all(T, app.allocator, .{}, .{});
-            defer app.allocator.free(items);
+            var arena = std.heap.ArenaAllocator.init(app.allocator);
+            defer arena.deinit();
+            const items = try stmt.all(T, arena.allocator(), .{}, .{});
             try res.json(items, .{});
         }
     }.route;
@@ -51,6 +52,7 @@ pub fn main() !void {
         .mutex = std.Thread.Mutex{},
     };
     var server = try httpz.Server(*App).init(allocator, .{ .port = 3000 }, &app);
+    defer server.deinit();
     var router = try server.router(.{});
 
     // Route for static files
