@@ -4,7 +4,7 @@ import { ApplicationsTable } from './components/ApplicationsTable'
 import { Toaster } from './components/Toaster'
 import { ApplicationForm } from './components/ApplicationForm'
 import { Layout } from './components/Layout'
-import { StatusTypes, ContactTypes } from './model/Types'
+import { StatusTypes, ContactTypes } from './model/SelectableType'
 
 declare global {
     namespace globalThis {
@@ -17,8 +17,22 @@ declare global {
 
 window.toaster = new Toaster
 window.serverUrl = 'http://localhost:3000'
-window.statusTypes = new StatusTypes(`${window.serverUrl}/api/statusTypes`)
-window.contactTypes = new ContactTypes(`${window.serverUrl}/api/contactTypes`)
+// load types from db on app start
+window.statusTypes = new StatusTypes({
+  listAll: `${window.serverUrl}/api/statusTypes`,
+  upsert: `${window.serverUrl}/api/statusType`
+})
+window.contactTypes = new ContactTypes({
+  listAll: `${window.serverUrl}/api/contactTypes`,
+  upsert: `${window.serverUrl}/api/contactType`
+})
+Promise.all([
+  window.statusTypes.init(),
+  window.contactTypes.init()
+]).then(() => {
+  // redraw after loading
+  m.redraw()
+})
 
 m.route.prefix = ''
 

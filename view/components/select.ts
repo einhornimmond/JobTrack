@@ -1,25 +1,30 @@
 import m from 'mithril'
+import { SelectableType } from '../model/SelectableType'
 
 export interface Option {
   id: number
   name: string
 }
 
-interface Attrs {
-  options: Option[]
+export interface Attrs<T extends Option> {
+  selectableType: SelectableType<T>
   value: number
   onchange: (value: number) => void
   label?: string
   placeholder?: string
-  addUrl?: string
 }
 
-export class Select implements m.ClassComponent<Attrs> {
+export class Select<T extends Option> implements m.ClassComponent<Attrs<T>> {
   private showAddOption: boolean = false
   private newOptionName: string = ''
   private isLoading: boolean = false
+  private options: T[] = []
 
-  private handleSelectChange(e: Event, attrs: Attrs): void {
+  oninit({attrs}: m.CVnode<Attrs<T>>) {
+    this.options = attrs.selectableType.getOptions()
+  }
+
+  private handleSelectChange(e: Event, attrs: Attrs<T>): void {
     const target = e.target as HTMLSelectElement
     const value = parseInt(target.value, 10)
     
@@ -40,23 +45,14 @@ export class Select implements m.ClassComponent<Attrs> {
     this.newOptionName = ''
   }
 
-  private async handleAddOption(e: Event, attrs: Attrs): Promise<void> {
+  private async handleAddOption(e: Event, attrs: Attrs<T>): Promise<void> {
     e.preventDefault()
     if (!this.newOptionName.trim()) return
     
     this.isLoading = true
     try {
-      const response = await fetch(serverUrl + attrs.addUrl!, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ name: this.newOptionName.trim() })
-      })
-      if (!response.ok) throw new Error('Fehler beim Hinzufügen')
-      
-      const newOption = await response.json()
-      attrs.options.push(newOption)
+      const newOption = await attrs.selectableType.add(this.newOptionName.trim())
+      this.options.push(newOption)
       attrs.onchange(newOption.id)
       this.showAddOption = false
       this.newOptionName = ''
@@ -73,7 +69,7 @@ export class Select implements m.ClassComponent<Attrs> {
     }
   }
 
-  view({ attrs }: m.CVnode<Attrs>) {
+  view({ attrs }: m.CVnode<Attrs<T>>) {
     return m('.select-container.mb-4', [
       attrs.label && m('label.block.text-white.mb-2', attrs.label),
       m('.flex.flex-col', [
@@ -83,13 +79,13 @@ export class Select implements m.ClassComponent<Attrs> {
         }, [
           m('option', { value: 0, disabled: true, selected: !attrs.value }, 
             attrs.placeholder || 'Bitte wählen...'),
-          attrs.options.map(option => 
+          this.options.map(option => 
             m('option.text-stone-800', { value: option.id, selected: attrs.value === option.id }, option.name)
           ),
-          attrs.addUrl && m('option.text-stone-600', { value: -1 }, '+ Neue Option hinzufügen')
+          m('option.text-stone-600', { value: -1 }, '+ Neue Option hinzufügen')
         ]),
         
-        this.showAddOption && attrs.addUrl && m('.add-option-container.p-3.rounded-lg.mb-2', [
+        this.showAddOption && m('.add-option-container.p-3.rounded-lg.mb-2', [
           m('.flex.items-center.gap-2', [
             m('input.text-white.border.border-white/30.rounded-lg.p-2.flex-grow', {
               type: 'text',

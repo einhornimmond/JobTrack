@@ -2,13 +2,20 @@ import type { BunRequest } from 'bun'
 import { listAll, upsert } from '../../repositories/StatusTypeRepository'
 
 async function upsertRoute(req: BunRequest<'/api/application'>) {
-  const contactType = await req.json()
-  const isUpdate = contactType.id > 0
-  const { changes } = upsert(contactType)
+  const statusType = await req.json()
+  const isUpdate = statusType.id > 0
+  const { changes, lastInsertRowid } = upsert(statusType)
+
+  if(!isUpdate) {
+    statusType.id = lastInsertRowid
+  }
 
   if (changes === 1) {
     return Response.json(
-      { message: `Status Type ${isUpdate ? 'updated' : 'added'}` },
+      { 
+        message: `Status Type ${isUpdate ? 'updated' : 'added'}`,
+        data: statusType 
+      },
       { status: 201 }
     )
   } else {
