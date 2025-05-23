@@ -20,16 +20,30 @@ export class ApplicationForm implements m.ClassComponent<Attrs> {
     this.application = new Application(null)
   }
 
-  inputField(label: string, fieldName: StringField | DateField, type: string = 'text') {
+  inputField(label: string, fieldName: StringField | DateField, type: string = 'text', oninput: (e: Event) => void) {
     return m('div', { class: 'mb-4' }, [
       m('label', { class: 'block text-sm font-semibold' }, label),
       m('input', {
         class: 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent',
         type: type,
         value: this.application[fieldName],
-        oninput: this.updateValue(fieldName),
+        oninput: oninput,
       })
     ]);
+  }
+
+  textField(label: string, fieldName: StringField, type: string = 'text') {
+    return this.inputField(label, fieldName, type, (e: Event) => {
+      const input = e.target as HTMLInputElement
+      this.application[fieldName] = input.value; 
+    })
+  }
+
+  dateField(label: string, fieldName: DateField) {
+    return this.inputField(label, fieldName, 'date', (e: Event) => {
+      const input = e.target as HTMLInputElement
+      this.application[fieldName] = new Date(input.value); 
+    })
   }
 
   checkboxField(label: string, fieldName: BooleanField){
@@ -38,7 +52,10 @@ export class ApplicationForm implements m.ClassComponent<Attrs> {
         type: 'checkbox',
         class: 'mr-2',
         checked: this.application[fieldName],
-        onchange: this.updateValue(fieldName),
+        onchange: (e: Event) => {
+          const input = e.target as HTMLInputElement
+          this.application[fieldName] = input.checked; 
+        },
       }),
       m('label', { class: 'text-sm font-semibold' }, label),
     ]);
@@ -55,34 +72,19 @@ export class ApplicationForm implements m.ClassComponent<Attrs> {
     } as SelectAttrs<T>);
   }
 
-  updateValue(fieldName: StringField | BooleanField | DateField | NumberField): (e: Event) => void {
-    return (e: Event) => { 
-      const htmlInput = e.target as HTMLInputElement
-      if (<StringField>fieldName) {
-        this.application[fieldName as StringField] = htmlInput.value; 
-      } else if(<BooleanField>fieldName) {
-        this.application[fieldName as BooleanField] = htmlInput.checked; 
-      } else if(<NumberField>fieldName) {
-        this.application[fieldName as NumberField] = Number(htmlInput.value); 
-      } else if(<DateField>fieldName) {
-        this.application[fieldName as DateField] = new Date(htmlInput.value); 
-      }
-    }
-  }
-
   view() {
     console.log(this.application)
     return m('form.container.w-3/5.mx-auto.text-stone-200', { class: 'space-y-6' }, [
-      this.inputField('Arbeitgeber', 'employer', 'employer'),
-      this.inputField('Webseite', 'webpage', 'url'),
-      this.inputField('Position', 'position', 'text'),
-      this.inputField('Kontaktperson', 'contact_person', 'text'),
-      this.inputField('Kontaktperson (Geschlecht)', 'contact_person_gender', 'text'),
+      this.textField('Arbeitgeber', 'employer'),
+      this.textField('Webseite', 'webpage', 'url'),
+      this.textField('Position', 'position'),
+      this.textField('Kontaktperson', 'contact_person'),
+      this.textField('Kontaktperson (Geschlecht)', 'contact_person_gender'),
 
-      this.inputField('Bewerbungsdatum', 'applying_date', 'date'),
-      this.inputField('Zusage-Datum', 'acknowledgement_date', 'date'),
-      this.inputField('Vorstellungsgespräch-Datum', 'interview_date', 'date'),
-      this.inputField('Absage-Datum', 'declination_date', 'date'),
+      this.dateField('Bewerbungsdatum', 'applying_date'),
+      this.dateField('Zusage-Datum', 'acknowledgement_date'),
+      this.dateField('Vorstellungsgespräch-Datum', 'interview_date'),
+      this.dateField('Absage-Datum', 'declination_date'),
 
       this.checkboxField('Zusage erhalten', 'acknowledged_occured'),
       this.checkboxField('Vorstellungsgespräch stattgefunden', 'interview_occured'),
