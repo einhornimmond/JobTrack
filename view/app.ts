@@ -4,8 +4,7 @@ import { ApplicationsTable } from './components/ApplicationsTable'
 import { Toaster } from './components/Toaster'
 import { ApplicationForm } from './components/ApplicationForm'
 import { Layout } from './components/Layout'
-import { StatusTypes } from './model/StatusTypes'
-import { ContactTypes } from './model/ContactTypes'
+import { StatusTypes, ContactTypes } from './model/Types'
 
 declare global {
     namespace globalThis {
