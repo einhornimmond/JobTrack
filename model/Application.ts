@@ -22,6 +22,11 @@ export const applicationSchema = z.object({
 
 export type ApplicationSchema = z.infer<typeof applicationSchema>
 
+export type DateField = 'applying_date' | 'acknowledgement_date' | 'interview_date' | 'declination_date'
+export type BooleanField = 'acknowledged_occured' | 'interview_occured' | 'declination_occured'
+export type NumberField = 'contact_type_id' | 'status_id'
+export type StringField = 'employer' | 'webpage' | 'position' | 'contact_person' | 'contact_person_gender'
+
 export class Application {
     id!: number
     applying_date!: Date
@@ -39,7 +44,7 @@ export class Application {
     contact_type_id!: number
     status_id!: number
 
-    private getDate(input: Date | string): Date {
+    private getDate(input: Date | string): Date  {
         if (typeof input === 'string') {
             return new Date(input)
         } else {

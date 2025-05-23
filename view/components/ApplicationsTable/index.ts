@@ -63,9 +63,9 @@ export class ApplicationsTable implements m.ClassComponent<Attrs> {
         m('td', app.contact_person),
         m('td', contactTypes.getNameById(app.contact_type_id)),
         m('td', statusTypes.getNameById(app.status_id)),
-        m('td', new Date(app.acknowledgement_date).toLocaleDateString()),
-        m('td', new Date(app.interview_date).toLocaleDateString()),
-        m('td.pr-2', new Date(app.declination_date).toLocaleDateString())
+        m('td', app.acknowledgement_date ? new Date(app.acknowledgement_date).toLocaleDateString() : ''),
+        m('td', app.interview_date ? new Date(app.interview_date).toLocaleDateString() : ''),
+        m('td.pr-2', app.declination_date ? new Date(app.declination_date).toLocaleDateString() : '')
       ])
     }
 
