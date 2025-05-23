@@ -18,12 +18,7 @@ export class Select<T extends Option> implements m.ClassComponent<Attrs<T>> {
   private showAddOption: boolean = false
   private newOptionName: string = ''
   private isLoading: boolean = false
-  private options: T[] = []
-
-  oninit({attrs}: m.CVnode<Attrs<T>>) {
-    this.options = attrs.selectableType.getOptions()
-  }
-
+  
   private handleSelectChange(e: Event, attrs: Attrs<T>): void {
     const target = e.target as HTMLSelectElement
     const value = parseInt(target.value, 10)
@@ -52,7 +47,6 @@ export class Select<T extends Option> implements m.ClassComponent<Attrs<T>> {
     this.isLoading = true
     try {
       const newOption = await attrs.selectableType.add(this.newOptionName.trim())
-      this.options.push(newOption)
       attrs.onchange(newOption.id)
       this.showAddOption = false
       this.newOptionName = ''
@@ -70,6 +64,8 @@ export class Select<T extends Option> implements m.ClassComponent<Attrs<T>> {
   }
 
   view({ attrs }: m.CVnode<Attrs<T>>) {
+    const options = attrs.selectableType.getOptions()
+    
     return m('.select-container.mb-4', [
       attrs.label && m('label.block.text-white.mb-2', attrs.label),
       m('.flex.flex-col', [
@@ -79,7 +75,7 @@ export class Select<T extends Option> implements m.ClassComponent<Attrs<T>> {
         }, [
           m('option', { value: 0, disabled: true, selected: !attrs.value }, 
             attrs.placeholder || 'Bitte wählen...'),
-          this.options.map(option => 
+          options.map(option => 
             m('option.text-stone-800', { value: option.id, selected: attrs.value === option.id }, option.name)
           ),
           m('option.text-stone-600', { value: -1 }, '+ Neue Option hinzufügen')

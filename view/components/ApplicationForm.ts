@@ -71,6 +71,7 @@ export class ApplicationForm implements m.ClassComponent<Attrs> {
   }
 
   view() {
+    console.log(this.application)
     return m('form.container.w-3/5.mx-auto.text-stone-200', { class: 'space-y-6' }, [
       this.inputField('Arbeitgeber', 'employer', 'employer'),
       this.inputField('Webseite', 'webpage', 'url'),
