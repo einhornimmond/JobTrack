@@ -1,26 +1,26 @@
-import { z } from 'zod'
+// import { z } from 'zod'
+import * as v from 'valibot'
 
 export const applicationTableName = 'applications'
-
-export const applicationSchema = z.object({
-    id: z.number().default(0),
-    applying_date: z.date().default(() => new Date()),
-    employer: z.string().default(''),
-    webpage: z.string().default(''),
-    position: z.string().default(''),
-    contact_person: z.string().default(''),
-    contact_person_gender: z.string().default(''),
-    acknowledgement_date: z.date().nullable().default(null),
-    interview_date: z.date().nullable().default(null),
-    declination_date: z.date().nullable().default(null),
-    acknowledged_occured: z.boolean().default(false),
-    interview_occured: z.boolean().default(false),
-    declination_occured: z.boolean().default(false),
-    contact_type_id: z.number().default(1),
-    status_id: z.number().default(1)
+export const applicationSchema = v.object({
+    id: v.optional(v.number()),
+    applying_date: v.optional(v.date()),
+    employer: v.string(),
+    webpage: v.string(),
+    position: v.string(),
+    contact_person: v.optional(v.string()),
+    contact_person_gender: v.optional(v.string()),
+    acknowledgement_date: v.optional(v.date()),
+    interview_date: v.optional(v.date()),
+    declination_date: v.optional(v.date()),
+    acknowledged_occured: v.boolean(),
+    interview_occured: v.boolean(),
+    declination_occured: v.boolean(),
+    contact_type_id: v.number(),
+    status_id: v.number()
 })
 
-export type ApplicationSchema = z.infer<typeof applicationSchema>
+export type ApplicationSchema = v.InferOutput<typeof applicationSchema>
 
 export type DateField = 'applying_date' | 'acknowledgement_date' | 'interview_date' | 'declination_date'
 export type BooleanField = 'acknowledged_occured' | 'interview_occured' | 'declination_occured'
@@ -62,13 +62,14 @@ export class Application {
             declination_date: data.declination_date ? this.getDate(data.declination_date) : undefined,
         } : {}
 
-        // Parse with Zod schema (which now includes defaults)
-        const result = applicationSchema.safeParse(processedData)
+        // assign processed data
+        // Object.assign(this, processedData)
+        // Parse with Valibot schema (which now includes defaults)
+        const result = v.safeParse(applicationSchema, processedData)
         if (!result.success) {
-            throw new Error(`Invalid application data: ${result.error.message}`)
+            throw new Error(`Invalid application data: ${result.issues}`)
         }
-
         // Assign validated data
-        Object.assign(this, result.data)
+        Object.assign(this, result)
     }
 }

@@ -17,6 +17,6 @@
   "dependencies": {
     "bootstrap": "^5.3.3",
     "mithril": "^2.2.14",
-    "zod": "^3.24.2"
+    "valibot": "^1.1.0"
   }
 }
