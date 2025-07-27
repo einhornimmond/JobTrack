@@ -9,7 +9,7 @@ export const db = new Database('db.sqlite3')
 // if it is a new sqlite db, create the tables
 db.run(`
   CREATE TABLE IF NOT EXISTS ${applicationTableName} (
-    id INTEGER PRIMARY KEY,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     applying_date TEXT NOT NULL,
     employer TEXT NOT NULL,
     webpage TEXT NOT NULL,
@@ -28,13 +28,13 @@ db.run(`
 `)
 
 db.run(`CREATE TABLE IF NOT EXISTS ${contactTypeTableName} (
-    id INTEGER PRIMARY KEY,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL
   )
 `)
 
 db.run(`CREATE TABLE IF NOT EXISTS ${statusTypeTableName} (
-  id INTEGER PRIMARY KEY,
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
   name TEXT NOT NULL
 )
 `)

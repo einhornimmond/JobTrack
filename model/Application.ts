@@ -1,27 +1,30 @@
-// import { z } from 'zod'
 import * as v from 'valibot'
+
+const dateSchema = v.pipe(v.union([v.date(), v.string()]), v.transform((value) => new Date(value)))
+const boolSchema = v.pipe(v.union([v.boolean(), v.number()]), v.transform((value) => value === 1))
 
 export const applicationTableName = 'applications'
 export const applicationSchema = v.object({
     id: v.optional(v.number()),
-    applying_date: v.optional(v.date()),
+    applying_date: dateSchema,
     employer: v.string(),
     webpage: v.string(),
     position: v.string(),
-    contact_person: v.optional(v.string()),
-    contact_person_gender: v.optional(v.string()),
-    acknowledgement_date: v.optional(v.date()),
-    interview_date: v.optional(v.date()),
-    declination_date: v.optional(v.date()),
-    acknowledged_occured: v.boolean(),
-    interview_occured: v.boolean(),
-    declination_occured: v.boolean(),
+    contact_person: v.optional(v.string(), '-'),
+    contact_person_gender: v.optional(v.string(), 'm'),
+    acknowledgement_date: v.optional(dateSchema),
+    interview_date: v.optional(dateSchema),
+    declination_date: v.optional(dateSchema),
+    acknowledged_occured: v.optional(boolSchema, false),
+    interview_occured: v.optional(boolSchema, false),
+    declination_occured: v.optional(boolSchema, false),
     contact_type_id: v.number(),
     status_id: v.number()
 })
 
-export type ApplicationSchema = v.InferOutput<typeof applicationSchema>
-
+export type ApplicationInput = v.InferInput<typeof applicationSchema>
+export type Application = v.InferOutput<typeof applicationSchema>
+/*
 export type DateField = 'applying_date' | 'acknowledgement_date' | 'interview_date' | 'declination_date'
 export type BooleanField = 'acknowledged_occured' | 'interview_occured' | 'declination_occured'
 export type NumberField = 'contact_type_id' | 'status_id'
@@ -44,32 +47,14 @@ export class Application {
     contact_type_id!: number
     status_id!: number
 
-    private getDate(input: Date | string): Date  {
-        if (typeof input === 'string') {
-            return new Date(input)
-        } else {
-            return input
-        }
-    }
-
     constructor(data: any | null | undefined) {
-        // Convert any string dates to Date objects in the input data
-        const processedData = data ? {
-            ...data,
-            applying_date: data.applying_date ? this.getDate(data.applying_date) : undefined,
-            acknowledgement_date: data.acknowledgement_date ? this.getDate(data.acknowledgement_date) : undefined,
-            interview_date: data.interview_date ? this.getDate(data.interview_date) : undefined,
-            declination_date: data.declination_date ? this.getDate(data.declination_date) : undefined,
-        } : {}
-
-        // assign processed data
-        // Object.assign(this, processedData)
         // Parse with Valibot schema (which now includes defaults)
-        const result = v.safeParse(applicationSchema, processedData)
+        const result = v.safeParse(applicationSchema, data)
         if (!result.success) {
-            throw new Error(`Invalid application data: ${result.issues}`)
+            throw new Error(`Invalid application data: ${JSON.stringify(result.issues, null, 2)}`)
         }
         // Assign validated data
-        Object.assign(this, result)
+        Object.assign(this, result.output)
     }
 }
+*/

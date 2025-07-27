@@ -1,5 +1,5 @@
 import m from 'mithril'
-import { Application } from '../../../model/Application'
+import { type Application } from '../../../model/Application'
 import { HeaderField } from './HeaderField'
 
 interface Attrs {
@@ -54,20 +54,29 @@ export class ApplicationsTable implements m.ClassComponent<Attrs> {
     return await response.json()
   }
 
-    viewApplication(app: Application): m.Child {
-      return m('tr.hover:bg-blue-300.hover:text-stone-950', { key: app.id }, [
-        m('td.pl-2', new Date(app.applying_date).toLocaleDateString()),
-        m('td', app.employer),
-        // m('td', m('a', { href: app.webpage, target: '_blank' }, app.webpage)),
-        m('td', app.position),
-        m('td', app.contact_person),
-        m('td', contactTypes.getNameById(app.contact_type_id)),
-        m('td', statusTypes.getNameById(app.status_id)),
-        m('td', app.acknowledgement_date ? new Date(app.acknowledgement_date).toLocaleDateString() : ''),
-        m('td', app.interview_date ? new Date(app.interview_date).toLocaleDateString() : ''),
-        m('td.pr-2', app.declination_date ? new Date(app.declination_date).toLocaleDateString() : '')
-      ])
+  viewApplication(app: Application): m.Child {
+    let contactPersonWithGender = app.contact_person
+    if (app.contact_person && app.contact_person !== '-') {
+      if (app.contact_person_gender === 'm') {
+        contactPersonWithGender = 'Herr '
+      } else if (app.contact_person_gender === 'w') {
+        contactPersonWithGender = 'Frau '
+      }
+      contactPersonWithGender += app.contact_person
     }
+    return m('tr.hover:bg-blue-300.hover:text-stone-950', { key: app.id }, [
+      m('td.pl-2', app.applying_date ? new Date(app.applying_date).toLocaleDateString() : ''),
+      m('td', app.employer),
+      // m('td', m('a', { href: app.webpage, target: '_blank' }, app.webpage)),
+      m('td', app.position),
+      m('td', contactPersonWithGender),
+      m('td', contactTypes.getNameById(app.contact_type_id)),
+      m('td', statusTypes.getNameById(app.status_id)),
+      m('td', app.acknowledgement_date ? new Date(app.acknowledgement_date).toLocaleDateString() : ''),
+      m('td', app.interview_date ? new Date(app.interview_date).toLocaleDateString() : ''),
+      m('td.pr-2', app.declination_date ? new Date(app.declination_date).toLocaleDateString() : '')
+    ])
+  }
 
   view() {
     if(this.state.applications) {

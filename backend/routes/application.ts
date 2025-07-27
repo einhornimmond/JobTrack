@@ -1,9 +1,11 @@
 import type { BunRequest } from 'bun'
 import { listAll, listLast6Month, show, upsert, remove } from '../../repositories/ApplicationRepository'
+import * as v from 'valibot'
+import { applicationSchema } from '../../model/Application'
 
 async function upsertRoute(req: BunRequest<'/api/application'>) {
-  const application = await req.json()
-  const isUpdate = application.id > 0
+  const application = v.parse(applicationSchema, await req.json())
+  const isUpdate = application.id !== undefined
   const { changes } = upsert(application)
 
   if (changes === 1) {

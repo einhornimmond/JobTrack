@@ -18,7 +18,7 @@ pub fn initDb() !sqlite.Db {
         \\CREATE TABLE IF NOT EXISTS 
     ++ applicationTableName ++
         \\ (
-        \\  id INTEGER PRIMARY KEY,
+        \\  id INTEGER PRIMARY KEY AUTOINCREMENT,
         \\  applying_date TEXT NOT NULL,
         \\  employer TEXT NOT NULL,
         \\  webpage TEXT NOT NULL,
@@ -40,7 +40,7 @@ pub fn initDb() !sqlite.Db {
         \\CREATE TABLE IF NOT EXISTS 
     ++ contactTypeTableName ++
         \\ (
-        \\  id INTEGER PRIMARY KEY,
+        \\  id INTEGER PRIMARY KEY AUTOINCREMENT,
         \\  name TEXT NOT NULL
         \\)
     , .{}, .{});
@@ -49,7 +49,7 @@ pub fn initDb() !sqlite.Db {
         \\CREATE TABLE IF NOT EXISTS 
     ++ statusTypeTableName ++
         \\ (
-        \\  id INTEGER PRIMARY KEY,
+        \\  id INTEGER PRIMARY KEY AUTOINCREMENT,
         \\  name TEXT NOT NULL
         \\)
     , .{}, .{});

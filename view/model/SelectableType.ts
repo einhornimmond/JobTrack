@@ -2,6 +2,7 @@ import type { Option } from '../components/select'
 import { StatusType } from '../../model/StatusType'
 import { ContactType } from '../../model/ContactType'
 import type { ApiRoutes } from '../type/ApiRoutes'
+import m from 'mithril'
 
 export class SelectableType<T extends Option> {
   private types: Map<number, T> = new Map()
@@ -27,17 +28,19 @@ export class SelectableType<T extends Option> {
   }
 
   public async add(name: string): Promise<T> {
-    const response = await fetch(this.apiRoutes.upsert, {
+    return m.request({
       method: 'POST',
-      headers: { 'Content-Type': 'application/json'},
-      body: JSON.stringify({ name })
+      url: this.apiRoutes.upsert,
+      body: { name }
+    }).then((value: unknown) => {
+      const responseData = value as T
+      this.types.set(responseData.id, responseData) 
+      return responseData
+    }).catch((error) => {
+      throw new Error(
+        `Error calling: ${this.apiRoutes.upsert} with data: ${JSON.stringify({ name })}, error: ${JSON.stringify(error, null, 2)}`
+      )
     })
-    if (!response.ok) {
-      throw new Error(`Error calling: ${this.apiRoutes.upsert} with data: ${JSON.stringify({ name })}`)
-    }
-    const responseData = await response.json() as T
-    this.types.set(responseData.id, responseData) 
-    return responseData
   }
 
   public getNameById(id: number): string {
