@@ -8,6 +8,11 @@ const ContactType = @import("ContactType.zig");
 const applicationTableName = @import("Application.zig").applicationTableName;
 const statusTypeTableName = @import("StatusType.zig").statusTypeTableName;
 const contactTypeTableName = @import("ContactType.zig").contactTypeTableName;
+// embed static files
+const indexHtml = @embedFile("./dist/index.html");
+const appCss = @embedFile("./dist/app.css");
+const appJs = @embedFile("./dist/app.js");
+const favicon = @embedFile("./dist/favicon.ico");
 
 const App = struct {
     db: *sqlite.Db,
@@ -70,9 +75,23 @@ pub fn main() !void {
 
 fn serveStaticFile(app: *App, req: *httpz.Request, res: *httpz.Response) !void {
     const allocator = app.allocator;
-    var path = req.url.path;
+    const path = req.url.path;
     if (std.mem.eql(u8, path, "/") or std.fs.path.extension(path).len == 0) {
-        path = "/index.html";
+        try res.writer().writeAll(indexHtml);
+        res.header("Content-Type", "text/html; charset=utf-8");
+        return;
+    } else if (std.mem.eql(u8, path, "/favicon.ico")) {
+        try res.writer().writeAll(favicon);
+        res.header("Content-Type", "image/x-icon");
+        return;
+    } else if (std.mem.eql(u8, path, "/app.css")) {
+        try res.writer().writeAll(appCss);
+        res.header("Content-Type", "text/css; charset=utf-8");
+        return;
+    } else if (std.mem.eql(u8, path, "/app.js")) {
+        try res.writer().writeAll(appJs);
+        res.header("Content-Type", "application/javascript");
+        return;
     }
     const full_path = try std.fs.path.join(allocator, &.{ ".", path });
     defer allocator.free(full_path); // not needed for arena allocator
