@@ -1,10 +1,23 @@
 import type { BunRequest } from 'bun'
 import { listAll, listLast6Month, show, upsert, remove } from '../../repositories/ApplicationRepository'
 import * as v from 'valibot'
-import { applicationSchema } from '../../model/Application'
+import { applicationSchema, type Application } from '../../model/Application'
 
 async function upsertRoute(req: BunRequest<'/api/application'>) {
-  const application = v.parse(applicationSchema, await req.json())
+  let application: Application
+  try {
+    application = v.parse(applicationSchema, await req.json())
+  } catch(e) {
+    if (e instanceof v.ValiError) {
+      const firstIssue = e.issues[0]
+      const key = firstIssue.path[0].key
+      const message = key + ': ' + firstIssue.message
+      return Response.json({ message }, { status: 400 })
+    } else { 
+      console.log(JSON.stringify(e, null, 2))
+      return Response.json({ message: JSON.stringify(e) }, { status: 400 })
+    }
+  }
   const isUpdate = application.id !== undefined
   const { changes } = upsert(application)
 

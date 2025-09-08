@@ -60,14 +60,13 @@ export class ApplicationForm implements m.ClassComponent<Attrs> {
     ]);
   }
 
-  selectField<T extends Option>(selectableType: SelectableType<T>, label: string, fieldName: keyof ApplicationInput, placeholder?: string, addUrl?: string) {
+  selectField<T extends Option>(selectableType: SelectableType<T>, label: string, fieldName: keyof ApplicationInput, placeholder?: string) {
     return m(Select<T>, {
       selectableType,
       value: this.application[fieldName],
       onchange: (e: number) => this.application[fieldName] = e,
       label,
       placeholder,
-      addUrl
     } as SelectAttrs<T>);
   }
 
